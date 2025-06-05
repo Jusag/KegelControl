@@ -90,24 +90,27 @@ fun ResistenceScreen(
                 Text(
                     text = "Zona de Trabajo",
                     color = Color.White.copy(alpha = 0.9f),
-                    fontSize = 26.sp
+                    fontSize = 35.sp
                 )
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-                Text("⏱️ Máximo: ${viewModel.formatTime(maxTime)}", color = Color.White, fontSize = 20.sp)
-                Text("⏳ Mínimo: ${viewModel.formatTime(minTime)}", color = Color.White, fontSize = 20.sp)
-                Text("📊 Promedio: ${viewModel.formatTime(avgTime)}", color = Color.White, fontSize = 20.sp)
+                Text("Máximo: ${viewModel.formatTime(maxTime)}", color = Color.White, fontSize = 25.sp)
+                Text("Mínimo: ${viewModel.formatTime(minTime)}", color = Color.White, fontSize = 25.sp)
+                Text("Promedio: ${viewModel.formatTime(avgTime)}", color = Color.White, fontSize = 25.sp)
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                Text("📋 Últimos 5 tiempos:", color = Color.White, fontSize = 22.sp)
+                Text("Últimos 5 tiempos:", color = Color.White, fontSize = 32.sp)
 
-                sessionTimes.takeLast(5).reversed().forEachIndexed { index, time ->
+                val lastCount = 5
+                val totalCount = sessionTimes.size
+                sessionTimes.takeLast(lastCount).reversed().forEachIndexed { index, time ->
+                    val realIndex = totalCount - index
                     Text(
-                        text = "   ${index + 1}. ${viewModel.formatTime(time)}",
+                        text = "$realIndex - ${viewModel.formatTime(time)}",
                         color = Color.White,
-                        fontSize = 18.sp
+                        fontSize = 30.sp
                     )
                 }
             }
