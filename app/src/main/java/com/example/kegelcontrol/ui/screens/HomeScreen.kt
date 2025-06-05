@@ -1,5 +1,6 @@
 package com.example.kegelcontrol.ui.screens
 
+import ResistenceScreen
 import android.provider.SyncStateContract.Columns
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,8 +25,8 @@ fun HomeScreen(
 ) {
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp), //Espacio alrededir dek contenedor
+            .fillMaxSize(),
+            //.padding(16.dp), //Espacio alrededir dek contenedor
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

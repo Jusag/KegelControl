@@ -39,7 +39,7 @@ fun CronoScreen(
 
     Column(
         modifier = Modifier
-            .fillMaxSize()
+            //.fillMaxSize()
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally // Deja centrado los elementos contenidos
     ) {
@@ -49,7 +49,7 @@ fun CronoScreen(
 
         Row(
             modifier = Modifier
-                .fillMaxWidth()
+
                 .padding(horizontal = 10.dp),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
