@@ -7,8 +7,21 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.SharingStarted
 
 class CronoViewModel : ViewModel() {
+
+    private val _sessionTimes = MutableStateFlow<List<Long>>(emptyList())
+    val sessionTimes: StateFlow<List<Long>> = _sessionTimes
+
+    val maxTime: StateFlow<Long> = sessionTimes.map { it.maxOrNull() ?: 0L }.stateIn(viewModelScope, SharingStarted.Eagerly, 0L)
+    val minTime: StateFlow<Long> = sessionTimes.map { it.minOrNull() ?: 0L }.stateIn(viewModelScope, SharingStarted.Eagerly, 0L)
+    val avgTime: StateFlow<Long> = sessionTimes.map { if (it.isNotEmpty()) it.sum() / it.size else 0L }.stateIn(viewModelScope, SharingStarted.Eagerly, 0L)
+
+
+
     private var cronoJob: Job? = null
 
     //Lista de Vueltas
@@ -47,10 +60,16 @@ class CronoViewModel : ViewModel() {
 
     fun resetCrono() {
         pauseCrono()
+
+        if (_timeMillis.value > 0) {
+            _sessionTimes.value = _sessionTimes.value + _timeMillis.value.toLong()
+        }
+
         _timeMillis.value = 0
         _lapsList.value = emptyList()
         auxProm = 0L
     }
+
 
     fun addLap() {
         if (isRunning.value) {

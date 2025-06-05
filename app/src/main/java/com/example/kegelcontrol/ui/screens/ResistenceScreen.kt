@@ -27,7 +27,12 @@ fun ResistenceScreen(
     // Fuente personalizada
     val customFont = FontFamily(Font(R.font.ltstopwatch_regular))
 
-    
+    val sessionTimes by viewModel.sessionTimes.collectAsState()
+    val maxTime by viewModel.maxTime.collectAsState()
+    val minTime by viewModel.minTime.collectAsState()
+    val avgTime by viewModel.avgTime.collectAsState()
+
+
 
     Column(
         modifier = Modifier
@@ -54,6 +59,7 @@ fun ResistenceScreen(
         }
 
         // 🔹 CAJA CENTRAL (PUEDE USARSE PARA ANIMACIONES)
+        /*
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -67,6 +73,46 @@ fun ResistenceScreen(
                 fontSize = 20.sp
             )
         }
+*/
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(0.6f) // Altura fija
+                .background(Color(0xFF2A2A2A), shape = RoundedCornerShape(20.dp))
+                .padding(16.dp),
+            contentAlignment = Alignment.TopCenter
+        ) {
+            Column(
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.fillMaxSize()
+            ) {
+                Text(
+                    text = "Zona de Trabajo",
+                    color = Color.White.copy(alpha = 0.9f),
+                    fontSize = 26.sp
+                )
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                Text("⏱️ Máximo: ${viewModel.formatTime(maxTime)}", color = Color.White, fontSize = 20.sp)
+                Text("⏳ Mínimo: ${viewModel.formatTime(minTime)}", color = Color.White, fontSize = 20.sp)
+                Text("📊 Promedio: ${viewModel.formatTime(avgTime)}", color = Color.White, fontSize = 20.sp)
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Text("📋 Últimos 5 tiempos:", color = Color.White, fontSize = 22.sp)
+
+                sessionTimes.takeLast(5).reversed().forEachIndexed { index, time ->
+                    Text(
+                        text = "   ${index + 1}. ${viewModel.formatTime(time)}",
+                        color = Color.White,
+                        fontSize = 18.sp
+                    )
+                }
+            }
+        }
+
 
         // 🔹 BOTÓN "PRESS"
         Box(
