@@ -32,6 +32,11 @@ fun ResistenceScreen(
     val minTime by viewModel.minTime.collectAsState()
     val avgTime by viewModel.avgTime.collectAsState()
 
+    ///Variables del Reset Cronometro
+    val isPressed2 = remember { mutableStateOf(false) }
+    val pressStartTime = remember { mutableStateOf(0L) }
+
+
 
 
     Column(
@@ -43,6 +48,7 @@ fun ResistenceScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // 🔹 CRONÓMETRO
+
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -52,13 +58,17 @@ fun ResistenceScreen(
         ) {
             Text(
                 text = viewModel.formatTime(timeMillis.toLong()),
-                fontSize = 50.sp,
+                fontSize = 55.sp,
                 fontFamily = customFont,
                 color = Color.White
             )
         }
 
+
+
+
         // 🔹 CAJA CENTRAL (PUEDE USARSE PARA ANIMACIONES)
+
         /*
         Box(
             modifier = Modifier
