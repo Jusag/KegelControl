@@ -1,123 +1,160 @@
 package com.example.kegelcontrol.ui.screens
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.kegelcontrol.R
 import com.example.kegelcontrol.ui.components.CustomButton
 import com.example.kegelcontrol.viewmodel.CronoViewModel
-
+import kotlinx.coroutines.launch
 
 @Composable
 fun CronoScreen(
-    viewModel: CronoViewModel = viewModel(),
-    cronoViewModel: CronoViewModel = viewModel()
+    viewModel: CronoViewModel = viewModel()
 ) {
     val time by viewModel.time.collectAsState()
     val isRunning by viewModel.isRunning.collectAsState()
-    var buttonTextStartPause by remember { mutableStateOf("Start") }
     val lapsList by viewModel.lapsList.collectAsState()
+    val coroutineScope = rememberCoroutineScope()
+
+    var buttonTextStartPause by remember { mutableStateOf("Start") }
+    var isPressed by remember { mutableStateOf(false) }
+
+    // Fuente personalizada
+    val customFont = FontFamily(Font(R.font.ltstopwatch_regular))
 
     Column(
         modifier = Modifier
-            //.fillMaxSize()
+            .fillMaxSize()
+            .background(Brush.verticalGradient(listOf(Color(0xFF1E1E1E), Color(0xFF121212))))
             .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally // Deja centrado los elementos contenidos
+        verticalArrangement = Arrangement.SpaceBetween,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(cronoViewModel.formatTime(time.toLong()))
+        // Cronómetro arriba (20%)
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(0.2f),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = viewModel.formatTime(time.toLong()),
+                fontSize = 55.sp,
+                fontFamily = customFont,
+                color = Color.White
+            )
+        }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        // Zona central con estadísticas y lista de vueltas (60%)
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(0.6f)
+                .background(Color(0xFF2A2A2A), shape = RoundedCornerShape(20.dp))
+                .padding(16.dp),
+            contentAlignment = Alignment.TopCenter
+        ) {
+            Column(
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.fillMaxSize()
+            ) {
+                Text(
+                    text = "Vueltas recientes",
+                    color = Color.White.copy(alpha = 0.9f),
+                    fontSize = 35.sp
+                )
 
+                Spacer(modifier = Modifier.height(10.dp))
+
+                // Lista de últimas 10 vueltas
+                LazyColumn(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    itemsIndexed(lapsList.takeLast(10).reversed()) { index, lap ->
+                        Text(
+                            "Vuelta ${lapsList.size - index} - Tiempo: ${viewModel.formatTime(lap.toLong())}",
+                            color = Color.White,
+                            fontSize = 25.sp
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // Promedio
+                if (lapsList.isNotEmpty()) {
+                    Text(
+                        "Promedio: ${viewModel.formatTime(viewModel.auxProm)}",
+                        color = Color.White,
+                        fontSize = 30.sp
+                    )
+                }
+            }
+        }
+
+        // Botones abajo (20%)
         Row(
             modifier = Modifier
-
-                .padding(horizontal = 10.dp),
-            horizontalArrangement = Arrangement.Center,
+                .fillMaxWidth()
+                .weight(0.2f)
+                .padding(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            //Apartado de botones
             CustomButton(
-                text = "$buttonTextStartPause",
+                text = buttonTextStartPause,
                 onClick = {
                     if (!isRunning) {
-                        cronoViewModel.startCrono()
+                        viewModel.startCrono()
                         buttonTextStartPause = "Pause"
                     } else {
-                        cronoViewModel.pauseCrono()
+                        viewModel.pauseCrono()
                         buttonTextStartPause = "Start"
                     }
                 }
             )
 
-            Spacer(modifier = Modifier.width(10.dp))
             CustomButton(
                 text = "Lap",
                 onClick = {
-                    cronoViewModel.addLap()
+                    viewModel.addLap()
                 }
             )
 
-            Spacer(modifier = Modifier.width(10.dp))
-            CustomButton(text = "Reset",
+            CustomButton(
+                text = "Reset",
                 onClick = {
-                    cronoViewModel.resetCrono()
+                    viewModel.resetCrono()
                     buttonTextStartPause = "Start"
-                })
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(5.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            LazyColumn(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(7.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            )
-            {
-                itemsIndexed(lapsList.takeLast(10).reversed()) { index, lap ->
-                    Text("Vuelta ${lapsList.size - index} - Tiempo: ${viewModel.formatTime(lap.toLong())}")
                 }
-            }
-            if (lapsList.size > 0) {
-                Text(
-                    "Promedio: " + viewModel.formatTime(viewModel.auxProm),
-                    modifier = Modifier.padding(start = 10.dp)
-                )
-            }
-
+            )
         }
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun PrevieCronoScreen()
-    {
-        val fakeViewModel = remember { CronoViewModel() }
-        CronoScreen(viewModel = fakeViewModel, cronoViewModel = fakeViewModel)
-    }
+fun PreviewCronoScreen() {
+    val fakeViewModel = remember { CronoViewModel() }
+    CronoScreen(viewModel = fakeViewModel)
+}
