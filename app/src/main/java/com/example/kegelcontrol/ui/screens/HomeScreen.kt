@@ -32,8 +32,8 @@ fun HomeScreen(
     ) {
 
         //Apartado Visual de Cronometro
-        //CronoScreen() //Pantalla De Crono con Promedio
-        ResistenceScreen()
+        CronoScreen() //Pantalla De Crono con Promedio
+        //ResistenceScreen()
 
     }
 }
