@@ -64,7 +64,6 @@ fun ResistenceScreen(
         ) {
             CustomButton(text = "←", onClick = onBack)
             Text(
-                // CORRECCIÓN: Forzamos .toLong() por si el StateFlow emite Int
                 text = viewModel.formatTime(time.toLong()),
                 modifier = Modifier.weight(1f),
                 textAlign = TextAlign.Center,
