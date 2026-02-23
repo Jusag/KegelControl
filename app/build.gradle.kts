@@ -3,9 +3,11 @@ plugins {
     id("org.jetbrains.kotlin.android")
 }
 
-kotlin { jvmToolchain { (this as JavaToolchainSpec).languageVersion.set(JavaLanguageVersion.of(17)) }
+kotlin {
+    jvmToolchain(17)
+}
 
-    android {
+android {
     namespace = "com.example.kegelcontrol"
     compileSdk = 34
 
@@ -25,11 +27,10 @@ kotlin { jvmToolchain { (this as JavaToolchainSpec).languageVersion.set(JavaLang
         kotlinCompilerExtensionVersion = "1.5.2"
     }
 
-        compileOptions {
-            sourceCompatibility = JavaVersion.VERSION_17
-            targetCompatibility = JavaVersion.VERSION_17
-        } }
-
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
 }
 
 dependencies {
