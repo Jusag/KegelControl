@@ -1,11 +1,18 @@
-package com.example.kegelcontrol.module
+// ui/modules/ModuleRegistry.kt
 
-/**
- * Modelo de datos de un módulo (nombre + ruta).
- * La lista real de módulos se define en [com.example.kegelcontrol.ui.screens.ScreenModule]:
- * todos los archivos en el directorio "screens" son módulos excepto HomeScreen.
- */
+package com.example.kegelcontrol.ui.modules
+
+import com.example.kegelcontrol.ui.screens.CronoScreen
+import com.example.kegelcontrol.ui.screens.ResistenceScreen
+//import com.example.kegelcontrol.ui.screens.DetailScreen
+
 data class AppModule(
     val name: String,
     val route: String,
+)
+
+val registeredModules = listOf(
+    AppModule("Resistencia", "resistencia"),
+    AppModule("Cronómetro", "crono")
+    //AppModule("Detalle", "detalle")
 )

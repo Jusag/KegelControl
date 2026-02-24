@@ -36,12 +36,11 @@ class CronoViewModel : ViewModel() {
     private val _isRunning = MutableStateFlow(false)
     val isRunning: StateFlow<Boolean> = _isRunning
 
-    // Control de vueltas realizadas (tiempo acumulado al añadir la última vuelta)
+    //Control de vueltas realizadas
     private var lapControl: Long = 0
 
-    // Promedio de vueltas de la sesión actual (derivado de lapsList para reacción en UI)
-    private val _avgLaps = MutableStateFlow(0L)
-    val avgLaps: StateFlow<Long> = _avgLaps
+    //Control de Promedio
+    var auxProm: Long = 0L
 
     fun startCrono() {
         if (_isRunning.value) return
@@ -68,16 +67,23 @@ class CronoViewModel : ViewModel() {
 
         _timeMillis.value = 0
         _lapsList.value = emptyList()
-        _avgLaps.value = 0L
+        auxProm = 0L
     }
 
+
     fun addLap() {
-        if (!_isRunning.value) return
-        val actualTime = _timeMillis.value.toLong()
-        val lapDuration = (actualTime - lapControl).coerceAtLeast(0L)
-        lapControl = actualTime
-        _lapsList.value = _lapsList.value + lapDuration
-        updateAvgLaps()
+        if (isRunning.value) {
+            val actualTime: Long = _timeMillis.value.toLong()
+            lapControl = actualTime - lapControl
+            if (lapControl < 0) {
+                lapControl = 5L
+            }
+
+            _lapsList.value = _lapsList.value + lapControl
+            lapControl = actualTime
+
+            promGeneral()
+        }
     }
 
     fun formatTime(raw: Long): String {
@@ -87,8 +93,7 @@ class CronoViewModel : ViewModel() {
         return "%02d:%02d.%02d".format(minutes, seconds, centiseconds)
     }
 
-    private fun updateAvgLaps() {
-        val list = _lapsList.value
-        _avgLaps.value = if (list.isNotEmpty()) list.sum() / list.size else 0L
+    fun promGeneral(){
+        auxProm =  lapsList.value.sumOf{it}/lapsList.value.size
     }
 }

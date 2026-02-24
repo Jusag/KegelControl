@@ -3,18 +3,16 @@ plugins {
     id("org.jetbrains.kotlin.android")
 }
 
-kotlin {
-    jvmToolchain(17)
-}
+kotlin { jvmToolchain { (this as JavaToolchainSpec).languageVersion.set(JavaLanguageVersion.of(17)) }
 
-android {
+    android {
     namespace = "com.example.kegelcontrol"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.kegelcontrol"
         minSdk = 21
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
     }
@@ -27,10 +25,11 @@ android {
         kotlinCompilerExtensionVersion = "1.5.2"
     }
 
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
+        compileOptions {
+            sourceCompatibility = JavaVersion.VERSION_17
+            targetCompatibility = JavaVersion.VERSION_17
+        } }
+
 }
 
 dependencies {
@@ -41,6 +40,7 @@ dependencies {
     implementation("androidx.activity:activity-compose:1.7.2")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.2")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
+    implementation("androidx.navigation:navigation-compose:2.9.7")
     testImplementation("junit:junit:4.13.2")
     testImplementation("androidx.test.ext:junit:1.1.3")
     testImplementation("androidx.test.espresso:espresso-core:3.4.0")
