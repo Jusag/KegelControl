@@ -4,14 +4,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -20,6 +18,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.kegelcontrol.R
+import com.example.kegelcontrol.ui.components.CustomButton
 import com.example.kegelcontrol.viewmodel.CronoViewModel
 import kotlinx.coroutines.launch
 
@@ -39,17 +38,21 @@ fun ResistenceScreen(
     val minTime by viewModel.minTime.collectAsState()
     val avgTime by viewModel.avgTime.collectAsState()
 
-    Scaffold {
+    Scaffold(
+        containerColor = MaterialTheme.colorScheme.background
+    ) {
         innerPadding ->
         Column(modifier = Modifier.padding(innerPadding)) {
-            Button(onClick = { navController.popBackStack() }) {
-                Text("Volver")
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                CustomButton(text = "Volver", onClick = { navController.popBackStack() })
             }
 
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Brush.verticalGradient(listOf(Color(0xFF1E1E1E), Color(0xFF121212))))
                     .padding(16.dp),
                 verticalArrangement = Arrangement.SpaceBetween,
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -65,7 +68,7 @@ fun ResistenceScreen(
                         text = viewModel.formatTime(timeMillis.toLong()),
                         fontSize = 55.sp,
                         fontFamily = customFont,
-                        color = Color.White
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                 }
 
@@ -73,7 +76,7 @@ fun ResistenceScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(0.6f)
-                        .background(Color(0xFF2A2A2A), shape = RoundedCornerShape(20.dp))
+                        .background(MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(20.dp))
                         .padding(16.dp),
                     contentAlignment = Alignment.TopCenter
                 ) {
@@ -84,19 +87,19 @@ fun ResistenceScreen(
                     ) {
                         Text(
                             text = "Zona de Trabajo",
-                            color = Color.White.copy(alpha = 0.9f),
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.9f),
                             fontSize = 35.sp
                         )
 
                         Spacer(modifier = Modifier.height(10.dp))
 
-                        Text("Máximo: ${viewModel.formatTime(maxTime)}", color = Color.White, fontSize = 25.sp)
-                        Text("Mínimo: ${viewModel.formatTime(minTime)}", color = Color.White, fontSize = 25.sp)
-                        Text("Promedio: ${viewModel.formatTime(avgTime)}", color = Color.White, fontSize = 25.sp)
+                        Text("Máximo: ${viewModel.formatTime(maxTime)}", color = MaterialTheme.colorScheme.onSurface, fontSize = 25.sp)
+                        Text("Mínimo: ${viewModel.formatTime(minTime)}", color = MaterialTheme.colorScheme.onSurface, fontSize = 25.sp)
+                        Text("Promedio: ${viewModel.formatTime(avgTime)}", color = MaterialTheme.colorScheme.onSurface, fontSize = 25.sp)
 
                         Spacer(modifier = Modifier.height(12.dp))
 
-                        Text("Últimos 5 tiempos:", color = Color.White, fontSize = 32.sp)
+                        Text("Últimos 5 tiempos:", color = MaterialTheme.colorScheme.onSurface, fontSize = 32.sp)
 
                         val lastCount = 5
                         val totalCount = sessionTimes.size
@@ -104,7 +107,7 @@ fun ResistenceScreen(
                             val realIndex = totalCount - index
                             Text(
                                 text = "$realIndex - ${viewModel.formatTime(time)}",
-                                color = Color.White,
+                                color = MaterialTheme.colorScheme.onSurface,
                                 fontSize = 30.sp
                             )
                         }
@@ -128,14 +131,14 @@ fun ResistenceScreen(
                             )
                         }
                         .background(
-                            color = if (isPressed) Color(0xFF4E2A8E) else Color(0xFF653AAC),
+                            color = if (isPressed) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.primary,
                             shape = RoundedCornerShape(50.dp)
                         ),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = "PRESS",
-                        color = Color.White,
+                        color = MaterialTheme.colorScheme.onPrimary,
                         fontSize = 35.sp,
                         modifier = Modifier.padding(16.dp)
                     )

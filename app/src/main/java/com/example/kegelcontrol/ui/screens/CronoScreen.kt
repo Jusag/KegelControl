@@ -13,14 +13,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
@@ -31,6 +29,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.kegelcontrol.R
 import com.example.kegelcontrol.ui.components.CustomButton
+import com.example.kegelcontrol.ui.theme.KegelControlTheme
 import com.example.kegelcontrol.viewmodel.CronoViewModel
 
 @Composable
@@ -46,16 +45,20 @@ fun CronoScreen(
 
     val customFont = FontFamily(Font(R.font.ltstopwatch_regular))
 
-    Scaffold {
+    Scaffold(
+        containerColor = MaterialTheme.colorScheme.background
+    ) {
         innerPadding ->
         Column(modifier = Modifier.padding(innerPadding)) {
-            Button(onClick = { navController.popBackStack() }) {
-                Text("Volver")
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                CustomButton(text = "Volver", onClick = { navController.popBackStack() })
             }
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Brush.verticalGradient(listOf(Color(0xFF1E1E1E), Color(0xFF121212))))
                     .padding(16.dp),
                 verticalArrangement = Arrangement.SpaceBetween,
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -70,7 +73,7 @@ fun CronoScreen(
                         text = viewModel.formatTime(time.toLong()),
                         fontSize = 55.sp,
                         fontFamily = customFont,
-                        color = Color.White
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                 }
 
@@ -78,7 +81,7 @@ fun CronoScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(0.6f)
-                        .background(Color(0xFF2A2A2A), shape = RoundedCornerShape(20.dp))
+                        .background(MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(20.dp))
                         .padding(16.dp),
                     contentAlignment = Alignment.TopCenter
                 ) {
@@ -89,7 +92,7 @@ fun CronoScreen(
                     ) {
                         Text(
                             text = "Vueltas recientes",
-                            color = Color.White.copy(alpha = 0.9f),
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.9f),
                             fontSize = 35.sp
                         )
 
@@ -103,7 +106,7 @@ fun CronoScreen(
                             itemsIndexed(lapsList.takeLast(10).reversed()) { index, lap ->
                                 Text(
                                     "Vuelta ${lapsList.size - index} - Tiempo: ${viewModel.formatTime(lap)}",
-                                    color = Color.White,
+                                    color = MaterialTheme.colorScheme.onSurface,
                                     fontSize = 25.sp
                                 )
                             }
@@ -114,7 +117,7 @@ fun CronoScreen(
                         if (lapsList.isNotEmpty()) {
                             Text(
                                 "Promedio: ${viewModel.formatTime(viewModel.auxProm)}",
-                                color = Color.White,
+                                color = MaterialTheme.colorScheme.onSurface,
                                 fontSize = 30.sp
                             )
                         }
@@ -166,5 +169,7 @@ fun CronoScreen(
 @Composable
 fun PreviewCronoScreen() {
     val fakeViewModel = remember { CronoViewModel() }
-    CronoScreen(navController = rememberNavController(), viewModel = fakeViewModel)
+    KegelControlTheme {
+        CronoScreen(navController = rememberNavController(), viewModel = fakeViewModel)
+    }
 }

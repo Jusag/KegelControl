@@ -1,6 +1,6 @@
 plugins {
     id("com.android.application")
-    id("org.jetbrains.kotlin.android")
+    alias(libs.plugins.kotlin.compose.compiler)
 }
 
 kotlin { jvmToolchain { (this as JavaToolchainSpec).languageVersion.set(JavaLanguageVersion.of(17)) }
@@ -19,10 +19,6 @@ kotlin { jvmToolchain { (this as JavaToolchainSpec).languageVersion.set(JavaLang
 
     buildFeatures {
         compose = true
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.2"
     }
 
         compileOptions {
