@@ -4,6 +4,8 @@ import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -113,15 +115,14 @@ fun ResistenceScreen(
 
                     Spacer(modifier = Modifier.height(12.dp))
 
-                    val lastCount = 5
-                    val totalCount = sessionTimes.size
-                    sessionTimes.takeLast(lastCount).reversed().forEachIndexed { index, time ->
-                        val realIndex = totalCount - index
-                        Text(
-                            text = "$realIndex - ${viewModel.formatTime(time)}",
-                            color = MaterialTheme.colorScheme.onSurface,
-                            fontSize = getAdaptiveFontSize(portraitSize = 30.sp)
-                        )
+                    LazyColumn(modifier = Modifier.fillMaxSize()) {
+                        items(sessionTimes.reversed()) { time ->
+                            Text(
+                                text = viewModel.formatTime(time),
+                                color = MaterialTheme.colorScheme.onSurface,
+                                fontSize = getAdaptiveFontSize(portraitSize = 30.sp)
+                            )
+                        }
                     }
                 }
 

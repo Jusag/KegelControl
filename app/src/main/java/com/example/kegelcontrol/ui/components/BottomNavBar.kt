@@ -13,8 +13,12 @@ import androidx.navigation.NavController
 import com.example.kegelcontrol.ui.Screen
 
 @Composable
-fun BottomNavBar(navController: NavController, currentRoute: String?) {
-    BottomAppBar {
+fun BottomNavBar(
+    navController: NavController,
+    currentRoute: String?,
+    modifier: Modifier = Modifier
+) {
+    BottomAppBar(modifier = modifier) {
         Spacer(modifier = Modifier.weight(1f))
         IconButton(onClick = { if (currentRoute != Screen.Home.route) navController.navigate(Screen.Home.route) }) {
             Icon(Icons.Default.Home, contentDescription = "Home")

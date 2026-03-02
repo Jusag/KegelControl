@@ -11,6 +11,8 @@ import com.example.kegelcontrol.ui.screens.HomeScreen
 import com.example.kegelcontrol.ui.screens.ResistenceScreen
 import com.example.kegelcontrol.ui.screens.SettingsScreen
 import com.example.kegelcontrol.viewmodel.CronoViewModel
+import com.example.kegelcontrol.viewmodel.SettingsViewModel
+import com.example.kegelcontrol.viewmodel.UiViewModel
 
 sealed class Screen(val route: String) {
     object Home : Screen("home")
@@ -24,10 +26,12 @@ sealed class Screen(val route: String) {
 fun AppNavigation() {
     val navController = rememberNavController()
     val cronoViewModel: CronoViewModel = viewModel()
+    val settingsViewModel: SettingsViewModel = viewModel()
+    val uiViewModel: UiViewModel = viewModel()
 
     NavHost(navController = navController, startDestination = Screen.Home.route) {
         composable(Screen.Home.route) {
-            HomeScreen(navController = navController)
+            HomeScreen(navController = navController, uiViewModel = uiViewModel)
         }
         composable(Screen.Crono.route) {
             CronoScreen(navController = navController, viewModel = cronoViewModel)
@@ -39,7 +43,7 @@ fun AppNavigation() {
             DetailScreen(navController = navController)
         }
         composable(Screen.Settings.route) {
-            SettingsScreen(navController = navController)
+            SettingsScreen(navController = navController, viewModel = settingsViewModel, uiViewModel = uiViewModel)
         }
     }
 }
