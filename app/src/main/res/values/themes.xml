@@ -1,5 +1,5 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <style name="Theme.KegelControl" parent="Theme.Material3.DayNight">
-        <!-- Sin personalización de colores -->
+    <style name="Theme.KegelControl" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Eliminamos la barra de acciones predeterminada para que no aparezca el nombre de la app en la parte superior -->
     </style>
 </resources>

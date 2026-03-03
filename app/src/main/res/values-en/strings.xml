@@ -1,0 +1,36 @@
+<resources>
+    <string name="app_name">Kegel Control</string>
+    <string name="settings_title">Settings</string>
+    <string name="sound_option">Sound</string>
+    <string name="vibration_option">Vibration</string>
+    <string name="language_option">Language</string>
+    <string name="system_language">System</string>
+    <string name="back_button">Back</string>
+    <string name="home_button">Home</string>
+
+    <string name="screen_crono">Stopwatch</string>
+    <string name="screen_resistence">Resistance</string>
+    <string name="screen_detail">Detail</string>
+
+    <string name="stat_max">Maximum</string>
+    <string name="stat_min">Minimum</string>
+    <string name="stat_avg">Average</string>
+    <string name="stat_lap">Lap</string>
+    <string name="stat_time">Time</string>
+
+    <string name="action_start">Start</string>
+    <string name="action_pause">Pause</string>
+    <string name="action_reset">Reset</string>
+    <string name="action_lap">Lap</string>
+    <string name="action_press">PRESS</string>
+
+    <string name="dialog_language_change_title">Change Language</string>
+    <string name="dialog_language_change_text">Do you want to change the application language?</string>
+    <string name="dialog_confirm">Confirm</string>
+    <string name="dialog_cancel">Cancel</string>
+
+    <string name="dialog_reset_title">Reset</string>
+    <string name="dialog_reset_text">Do you want to clear all registered data?</string>
+
+    <string name="repetition_label">Repetition</string>
+</resources>

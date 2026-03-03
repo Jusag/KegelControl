@@ -6,13 +6,12 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
@@ -40,12 +39,8 @@ fun CronoScreen(
     val time by viewModel.time.collectAsState()
     val isRunning by viewModel.isRunning.collectAsState()
     val lapsList by viewModel.lapsList.collectAsState()
-
-    var buttonTextStartPause by remember { mutableStateOf(if (isRunning) "Pause" else "Start") }
-
-    LaunchedEffect(isRunning) {
-        buttonTextStartPause = if (isRunning) "Pause" else "Start"
-    }
+    
+    var showResetDialog by remember { mutableStateOf(false) }
 
     val customFont = FontFamily(Font(R.font.ltstopwatch_regular))
     val configuration = LocalConfiguration.current
@@ -56,10 +51,14 @@ fun CronoScreen(
         innerPadding ->
         Column(modifier = Modifier.padding(innerPadding)) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                CustomButton(text = "Volver", onClick = { navController.popBackStack() })
+                CustomButton(text = stringResource(R.string.back_button), onClick = { navController.popBackStack() })
+                CustomButton(text = stringResource(R.string.action_reset), onClick = { showResetDialog = true })
             }
             Column(
                 modifier = Modifier
@@ -91,24 +90,11 @@ fun CronoScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     if (lapsList.isNotEmpty()) {
-                        if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.Center
-                            ) {
-                                Text(
-                                    "Promedio: ${viewModel.formatTime(viewModel.auxProm)}",
-                                    color = MaterialTheme.colorScheme.onSurface,
-                                    fontSize = getAdaptiveFontSize(portraitSize = 30.sp)
-                                )
-                            }
-                        } else {
-                            Text(
-                                "Promedio: ${viewModel.formatTime(viewModel.auxProm)}",
-                                color = MaterialTheme.colorScheme.onSurface,
-                                fontSize = getAdaptiveFontSize(portraitSize = 30.sp)
-                            )
-                        }
+                        Text(
+                            "${stringResource(R.string.stat_avg)}: ${viewModel.formatTime(viewModel.auxProm)}",
+                            color = MaterialTheme.colorScheme.onSurface,
+                            fontSize = getAdaptiveFontSize(portraitSize = 30.sp)
+                        )
                         Spacer(modifier = Modifier.height(12.dp))
                     }
 
@@ -119,7 +105,7 @@ fun CronoScreen(
                     ) {
                         itemsIndexed(lapsList.takeLast(10).reversed()) { index, lap ->
                             Text(
-                                "Vuelta ${lapsList.size - index} - Tiempo: ${viewModel.formatTime(lap)}",
+                                "${stringResource(R.string.stat_lap)} ${lapsList.size - index} - ${stringResource(R.string.stat_time)}: ${viewModel.formatTime(lap)}",
                                 color = MaterialTheme.colorScheme.onSurface,
                                 fontSize = getAdaptiveFontSize(portraitSize = 25.sp)
                             )
@@ -136,7 +122,7 @@ fun CronoScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     CustomButton(
-                        text = buttonTextStartPause,
+                        text = if (isRunning) stringResource(R.string.action_pause) else stringResource(R.string.action_start),
                         onClick = {
                             if (!isRunning) {
                                 viewModel.startCrono()
@@ -147,21 +133,35 @@ fun CronoScreen(
                     )
 
                     CustomButton(
-                        text = "Lap",
+                        text = stringResource(R.string.action_lap),
                         onClick = {
                             viewModel.addLap()
-                        }
-                    )
-
-                    CustomButton(
-                        text = "Reset",
-                        onClick = {
-                            viewModel.resetCrono()
                         }
                     )
                 }
             }
         }
+    }
+
+    if (showResetDialog) {
+        AlertDialog(
+            onDismissRequest = { showResetDialog = false },
+            title = { Text(stringResource(R.string.dialog_reset_title)) },
+            text = { Text(stringResource(R.string.dialog_reset_text)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    viewModel.resetCrono()
+                    showResetDialog = false
+                }) {
+                    Text(stringResource(R.string.dialog_confirm))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showResetDialog = false }) {
+                    Text(stringResource(R.string.dialog_cancel))
+                }
+            }
+        )
     }
 }
 

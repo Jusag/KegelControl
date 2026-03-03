@@ -13,6 +13,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.kegelcontrol.ui.Screen
@@ -28,7 +29,6 @@ fun HomeScreen(navController: NavController, uiViewModel: UiViewModel) {
         Screen.Detail
     )
 
-    // Obtenemos las configuraciones desde la clase maestra (UiViewModel)
     val bottomNavBarHeight by uiViewModel.bottomNavBarHeight.collectAsState()
     val buttonHorizontalPadding by uiViewModel.buttonHorizontalPadding.collectAsState()
 
@@ -54,7 +54,7 @@ fun HomeScreen(navController: NavController, uiViewModel: UiViewModel) {
                         .fillMaxWidth()
                         .padding(horizontal = buttonHorizontalPadding)
                         .height(80.dp),
-                    text = screen.route.replaceFirstChar { it.uppercase() },
+                    text = stringResource(screen.resourceId),
                     onClick = { navController.navigate(screen.route) }
                 )
                 if (index < screens.lastIndex) {

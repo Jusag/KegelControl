@@ -5,7 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
@@ -62,7 +63,7 @@ fun ResistenceScreen(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
             ) {
-                CustomButton(text = "Volver", onClick = { navController.popBackStack() })
+                CustomButton(text = stringResource(R.string.back_button), onClick = { navController.popBackStack() })
             }
 
             Column(
@@ -93,7 +94,7 @@ fun ResistenceScreen(
                         .weight(0.6f)
                         .background(MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(20.dp))
                         .padding(16.dp),
-                    verticalArrangement = Arrangement.Top, // Forzar alineación en la parte superior
+                    verticalArrangement = Arrangement.Top,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -101,24 +102,27 @@ fun ResistenceScreen(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceEvenly
                         ) {
-                            Text("Máximo: ${viewModel.formatTime(maxTime)}", color = MaterialTheme.colorScheme.onSurface, fontSize = getAdaptiveFontSize(portraitSize = 25.sp))
-                            Text("Mínimo: ${viewModel.formatTime(minTime)}", color = MaterialTheme.colorScheme.onSurface, fontSize = getAdaptiveFontSize(portraitSize = 25.sp))
-                            Text("Promedio: ${viewModel.formatTime(avgTime)}", color = MaterialTheme.colorScheme.onSurface, fontSize = getAdaptiveFontSize(portraitSize = 25.sp))
+                            Text("${stringResource(R.string.stat_max)}: ${viewModel.formatTime(maxTime)}", color = MaterialTheme.colorScheme.onSurface, fontSize = getAdaptiveFontSize(portraitSize = 25.sp))
+                            Text("${stringResource(R.string.stat_min)}: ${viewModel.formatTime(minTime)}", color = MaterialTheme.colorScheme.onSurface, fontSize = getAdaptiveFontSize(portraitSize = 25.sp))
+                            Text("${stringResource(R.string.stat_avg)}: ${viewModel.formatTime(avgTime)}", color = MaterialTheme.colorScheme.onSurface, fontSize = getAdaptiveFontSize(portraitSize = 25.sp))
                         }
                     } else {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text("Máximo: ${viewModel.formatTime(maxTime)}", color = MaterialTheme.colorScheme.onSurface, fontSize = getAdaptiveFontSize(portraitSize = 25.sp))
-                            Text("Mínimo: ${viewModel.formatTime(minTime)}", color = MaterialTheme.colorScheme.onSurface, fontSize = getAdaptiveFontSize(portraitSize = 25.sp))
-                            Text("Promedio: ${viewModel.formatTime(avgTime)}", color = MaterialTheme.colorScheme.onSurface, fontSize = getAdaptiveFontSize(portraitSize = 25.sp))
+                            Text("${stringResource(R.string.stat_max)}: ${viewModel.formatTime(maxTime)}", color = MaterialTheme.colorScheme.onSurface, fontSize = getAdaptiveFontSize(portraitSize = 25.sp))
+                            Text("${stringResource(R.string.stat_min)}: ${viewModel.formatTime(minTime)}", color = MaterialTheme.colorScheme.onSurface, fontSize = getAdaptiveFontSize(portraitSize = 25.sp))
+                            Text("${stringResource(R.string.stat_avg)}: ${viewModel.formatTime(avgTime)}", color = MaterialTheme.colorScheme.onSurface, fontSize = getAdaptiveFontSize(portraitSize = 25.sp))
                         }
                     }
 
                     Spacer(modifier = Modifier.height(12.dp))
 
-                    LazyColumn(modifier = Modifier.fillMaxSize()) {
-                        items(sessionTimes.reversed()) { time ->
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        itemsIndexed(sessionTimes.reversed()) { index, time ->
                             Text(
-                                text = viewModel.formatTime(time),
+                                text = "${stringResource(R.string.repetition_label)} ${sessionTimes.size - index}: ${viewModel.formatTime(time)}",
                                 color = MaterialTheme.colorScheme.onSurface,
                                 fontSize = getAdaptiveFontSize(portraitSize = 30.sp)
                             )
@@ -150,7 +154,7 @@ fun ResistenceScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "PRESS",
+                        text = stringResource(R.string.action_press),
                         color = MaterialTheme.colorScheme.onPrimary,
                         fontSize = getAdaptiveFontSize(portraitSize = 35.sp),
                         modifier = Modifier.padding(16.dp)
