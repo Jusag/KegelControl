@@ -24,11 +24,13 @@ import com.example.kegelcontrol.ui.components.CustomButton
 import com.example.kegelcontrol.ui.theme.KegelControlTheme
 import com.example.kegelcontrol.ui.util.getAdaptiveFontSize
 import com.example.kegelcontrol.viewmodel.CronoViewModel
+import com.example.kegelcontrol.viewmodel.UiViewModel
 
 @Composable
 fun CronoScreen(
     navController: NavController,
-    viewModel: CronoViewModel
+    viewModel: CronoViewModel,
+    uiViewModel: UiViewModel
 ) {
     DisposableEffect(Unit) {
         onDispose {
@@ -39,6 +41,9 @@ fun CronoScreen(
     val time by viewModel.time.collectAsState()
     val isRunning by viewModel.isRunning.collectAsState()
     val lapsList by viewModel.lapsList.collectAsState()
+
+    val topButtonHeight by uiViewModel.topButtonHeight.collectAsState()
+    val topButtonFontSize by uiViewModel.topButtonFontSize.collectAsState()
     
     var showResetDialog by remember { mutableStateOf(false) }
 
@@ -57,8 +62,18 @@ fun CronoScreen(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                CustomButton(text = stringResource(R.string.back_button), onClick = { navController.popBackStack() })
-                CustomButton(text = stringResource(R.string.action_reset), onClick = { showResetDialog = true })
+                CustomButton(
+                    modifier = Modifier.height(topButtonHeight),
+                    text = stringResource(R.string.back_button),
+                    onClick = { navController.popBackStack() },
+                    fontSize = topButtonFontSize
+                )
+                CustomButton(
+                    modifier = Modifier.height(topButtonHeight),
+                    text = stringResource(R.string.action_reset),
+                    onClick = { showResetDialog = true },
+                    fontSize = topButtonFontSize
+                )
             }
             Column(
                 modifier = Modifier
@@ -122,6 +137,7 @@ fun CronoScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     CustomButton(
+                        modifier = Modifier.size(150.dp, 80.dp),
                         text = if (isRunning) stringResource(R.string.action_pause) else stringResource(R.string.action_start),
                         onClick = {
                             if (!isRunning) {
@@ -129,14 +145,17 @@ fun CronoScreen(
                             } else {
                                 viewModel.pauseCrono()
                             }
-                        }
+                        },
+                        fontSize = 24.sp
                     )
 
                     CustomButton(
+                        modifier = Modifier.size(150.dp, 80.dp),
                         text = stringResource(R.string.action_lap),
                         onClick = {
                             viewModel.addLap()
-                        }
+                        },
+                        fontSize = 24.sp
                     )
                 }
             }
@@ -150,7 +169,7 @@ fun CronoScreen(
             text = { Text(stringResource(R.string.dialog_reset_text)) },
             confirmButton = {
                 TextButton(onClick = {
-                    viewModel.resetCrono()
+                    viewModel.hardReset()
                     showResetDialog = false
                 }) {
                     Text(stringResource(R.string.dialog_confirm))
@@ -170,6 +189,6 @@ fun CronoScreen(
 fun PreviewCronoScreen() {
     val fakeViewModel = com.example.kegelcontrol.viewmodel.CronoViewModel()
     KegelControlTheme {
-        CronoScreen(navController = rememberNavController(), viewModel = fakeViewModel)
+        CronoScreen(navController = rememberNavController(), viewModel = fakeViewModel, uiViewModel = viewModel())
     }
 }

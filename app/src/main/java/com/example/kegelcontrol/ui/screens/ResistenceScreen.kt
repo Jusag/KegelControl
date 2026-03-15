@@ -7,9 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,13 +25,15 @@ import com.example.kegelcontrol.R
 import com.example.kegelcontrol.ui.components.CustomButton
 import com.example.kegelcontrol.ui.theme.KegelControlTheme
 import com.example.kegelcontrol.ui.util.getAdaptiveFontSize
-import com.example.kegelcontrol.viewmodel.CronoViewModel
+import com.example.kegelcontrol.viewmodel.ResistenceViewModel
+import com.example.kegelcontrol.viewmodel.UiViewModel
 import kotlinx.coroutines.launch
 
 @Composable
 fun ResistenceScreen(
     navController: NavController,
-    viewModel: CronoViewModel
+    viewModel: ResistenceViewModel,
+    uiViewModel: UiViewModel
 ) {
     DisposableEffect(Unit) {
         onDispose {
@@ -44,6 +44,10 @@ fun ResistenceScreen(
     val timeMillis by viewModel.time.collectAsState()
     val coroutineScope = rememberCoroutineScope()
     var isPressed by remember { mutableStateOf(false) }
+    var showResetDialog by remember { mutableStateOf(false) }
+
+    val topButtonHeight by uiViewModel.topButtonHeight.collectAsState()
+    val topButtonFontSize by uiViewModel.topButtonFontSize.collectAsState()
 
     val customFont = FontFamily(Font(R.font.ltstopwatch_regular))
 
@@ -60,10 +64,24 @@ fun ResistenceScreen(
         innerPadding ->
         Column(modifier = Modifier.padding(innerPadding)) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                CustomButton(text = stringResource(R.string.back_button), onClick = { navController.popBackStack() })
+                CustomButton(
+                    modifier = Modifier.height(topButtonHeight),
+                    text = stringResource(R.string.back_button),
+                    onClick = { navController.popBackStack() },
+                    fontSize = topButtonFontSize
+                )
+                CustomButton(
+                    modifier = Modifier.height(topButtonHeight),
+                    text = stringResource(R.string.action_reset),
+                    onClick = { showResetDialog = true },
+                    fontSize = topButtonFontSize
+                )
             }
 
             Column(
@@ -163,13 +181,34 @@ fun ResistenceScreen(
             }
         }
     }
+
+    if (showResetDialog) {
+        AlertDialog(
+            onDismissRequest = { showResetDialog = false },
+            title = { Text(stringResource(R.string.dialog_reset_title)) },
+            text = { Text(stringResource(R.string.dialog_reset_text)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    viewModel.hardReset()
+                    showResetDialog = false
+                }) {
+                    Text(stringResource(R.string.dialog_confirm))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showResetDialog = false }) {
+                    Text(stringResource(R.string.dialog_cancel))
+                }
+            }
+        )
+    }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun PreviewResistenceScreen() {
-    val fakeViewModel = com.example.kegelcontrol.viewmodel.CronoViewModel()
+    val fakeViewModel = com.example.kegelcontrol.viewmodel.ResistenceViewModel()
     KegelControlTheme {
-        ResistenceScreen(navController = rememberNavController(), viewModel = fakeViewModel)
+        ResistenceScreen(navController = rememberNavController(), viewModel = fakeViewModel, uiViewModel = viewModel())
     }
 }

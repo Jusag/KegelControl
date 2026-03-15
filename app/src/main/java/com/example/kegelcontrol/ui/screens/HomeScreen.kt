@@ -26,7 +26,7 @@ fun HomeScreen(navController: NavController, uiViewModel: UiViewModel) {
     val screens = listOf(
         Screen.Crono,
         Screen.Resistence,
-        Screen.Detail
+        Screen.Routine // Cambiado de Detail a Routine
     )
 
     val bottomNavBarHeight by uiViewModel.bottomNavBarHeight.collectAsState()

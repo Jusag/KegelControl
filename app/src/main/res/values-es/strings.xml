@@ -10,7 +10,7 @@
 
     <string name="screen_crono">Cronómetro</string>
     <string name="screen_resistence">Resistencia</string>
-    <string name="screen_detail">Detalle</string>
+    <string name="screen_routine">Rutina</string>
 
     <string name="stat_max">Máximo</string>
     <string name="stat_min">Mínimo</string>
@@ -33,4 +33,9 @@
     <string name="dialog_reset_text">¿Deseas borrar todos los datos registrados?</string>
 
     <string name="repetition_label">Repetición</string>
+
+    <string name="routine_contract">Contraer</string>
+    <string name="routine_relax">Relajar</string>
+    <string name="routine_rest">Descanso</string>
+    <string name="routine_seconds_unit">seg</string>
 </resources>

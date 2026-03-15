@@ -6,10 +6,10 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.launch
 
 class CronoViewModel : ViewModel() {
 
@@ -18,28 +18,20 @@ class CronoViewModel : ViewModel() {
 
     val maxTime: StateFlow<Long> = sessionTimes.map { it.maxOrNull() ?: 0L }.stateIn(viewModelScope, SharingStarted.Eagerly, 0L)
     val minTime: StateFlow<Long> = sessionTimes.map { it.minOrNull() ?: 0L }.stateIn(viewModelScope, SharingStarted.Eagerly, 0L)
-    val avgTime: StateFlow<Long> = sessionTimes.map { if (it.isNotEmpty()) it.sum() / it.size else 0L }.stateIn(viewModelScope, SharingStarted.Eagerly, 0L)
-
-
+    val avgTime: StateFlow<Long> = sessionTimes.map { if (it.isNotEmpty()) it.average().toLong() else 0L }.stateIn(viewModelScope, SharingStarted.Eagerly, 0L)
 
     private var cronoJob: Job? = null
 
-    //Lista de Vueltas
     private val _lapsList = MutableStateFlow<List<Long>>(emptyList())
     val lapsList: StateFlow<List<Long>> = _lapsList
 
-    // Estado del tiempo transcurrido
     private val _timeMillis = MutableStateFlow(0)
     val time: StateFlow<Int> = _timeMillis
 
-    //Estado de ejecucion
     private val _isRunning = MutableStateFlow(false)
     val isRunning: StateFlow<Boolean> = _isRunning
 
-    //Control de vueltas realizadas
     private var lapControl: Long = 0
-
-    //Control de Promedio
     var auxProm: Long = 0L
 
     fun startCrono() {
@@ -58,28 +50,35 @@ class CronoViewModel : ViewModel() {
         cronoJob?.cancel()
     }
 
+    // Reset suave: guarda el tiempo en la sesión y limpia el cronómetro actual
     fun resetCrono() {
         pauseCrono()
-
         if (_timeMillis.value > 0) {
             _sessionTimes.value = _sessionTimes.value + _timeMillis.value.toLong()
         }
-
         _timeMillis.value = 0
         _lapsList.value = emptyList()
+        lapControl = 0L
         auxProm = 0L
     }
 
+    // Reset total: borra sesión, vueltas, tiempos y estadísticas
+    fun hardReset() {
+        pauseCrono()
+        _sessionTimes.value = emptyList()
+        _timeMillis.value = 0
+        _lapsList.value = emptyList()
+        lapControl = 0L
+        auxProm = 0L
+    }
 
     fun addLap() {
         if (isRunning.value) {
-            val actualTime: Long = _timeMillis.value.toLong()
-            lapControl = actualTime - lapControl
-            if (lapControl < 0) {
-                lapControl = 5L
+            val actualTime = _timeMillis.value.toLong()
+            val lapTime = actualTime - lapControl
+            if (lapTime > 0) {
+                _lapsList.value = _lapsList.value + lapTime
             }
-
-            _lapsList.value = _lapsList.value + lapControl
             lapControl = actualTime
 
             promGeneral()
@@ -93,7 +92,9 @@ class CronoViewModel : ViewModel() {
         return "%02d:%02d.%02d".format(minutes, seconds, centiseconds)
     }
 
-    fun promGeneral(){
-        auxProm =  lapsList.value.sumOf{it}/lapsList.value.size
+    private fun promGeneral() {
+        if (lapsList.value.isNotEmpty()) {
+            auxProm = lapsList.value.average().toLong()
+        }
     }
 }

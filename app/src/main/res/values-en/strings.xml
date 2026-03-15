@@ -10,7 +10,7 @@
 
     <string name="screen_crono">Stopwatch</string>
     <string name="screen_resistence">Resistance</string>
-    <string name="screen_detail">Detail</string>
+    <string name="screen_routine">Routine</string>
 
     <string name="stat_max">Maximum</string>
     <string name="stat_min">Minimum</string>
@@ -33,4 +33,12 @@
     <string name="dialog_reset_text">Do you want to clear all registered data?</string>
 
     <string name="repetition_label">Repetition</string>
+
+    <string name="routine_contract">Contract</string>
+    <string name="routine_relax">Relax</string>
+    <string name="routine_rest">Rest</string>
+    <string name="routine_seconds_unit">sec</string>
+
+    <string name="move_up_description">Move up</string>
+    <string name="move_down_description">Move down</string>
 </resources>
