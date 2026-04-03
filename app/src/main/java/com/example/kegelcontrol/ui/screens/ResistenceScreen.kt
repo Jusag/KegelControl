@@ -19,6 +19,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.kegelcontrol.R
@@ -106,44 +107,48 @@ fun ResistenceScreen(
                 }
 
                 // Tarjeta de estadísticas
-                Column(
+                Surface(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .weight(0.6f)
-                        .background(MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(20.dp))
-                        .padding(16.dp),
-                    verticalArrangement = Arrangement.Top,
-                    horizontalAlignment = Alignment.CenterHorizontally
+                        .weight(0.6f),
+                    color = MaterialTheme.colorScheme.surface,
+                    shape = RoundedCornerShape(20.dp)
                 ) {
-                    if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceEvenly
-                        ) {
-                            Text("${stringResource(R.string.stat_max)}: ${viewModel.formatTime(maxTime)}", color = MaterialTheme.colorScheme.onSurface, fontSize = getAdaptiveFontSize(portraitSize = 25.sp))
-                            Text("${stringResource(R.string.stat_min)}: ${viewModel.formatTime(minTime)}", color = MaterialTheme.colorScheme.onSurface, fontSize = getAdaptiveFontSize(portraitSize = 25.sp))
-                            Text("${stringResource(R.string.stat_avg)}: ${viewModel.formatTime(avgTime)}", color = MaterialTheme.colorScheme.onSurface, fontSize = getAdaptiveFontSize(portraitSize = 25.sp))
-                        }
-                    } else {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text("${stringResource(R.string.stat_max)}: ${viewModel.formatTime(maxTime)}", color = MaterialTheme.colorScheme.onSurface, fontSize = getAdaptiveFontSize(portraitSize = 25.sp))
-                            Text("${stringResource(R.string.stat_min)}: ${viewModel.formatTime(minTime)}", color = MaterialTheme.colorScheme.onSurface, fontSize = getAdaptiveFontSize(portraitSize = 25.sp))
-                            Text("${stringResource(R.string.stat_avg)}: ${viewModel.formatTime(avgTime)}", color = MaterialTheme.colorScheme.onSurface, fontSize = getAdaptiveFontSize(portraitSize = 25.sp))
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
+                    Column(
+                        modifier = Modifier.padding(16.dp),
+                        verticalArrangement = Arrangement.Top,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        itemsIndexed(sessionTimes.reversed()) { index, time ->
-                            Text(
-                                text = "${stringResource(R.string.repetition_label)} ${sessionTimes.size - index}: ${viewModel.formatTime(time)}",
-                                color = MaterialTheme.colorScheme.onSurface,
-                                fontSize = getAdaptiveFontSize(portraitSize = 30.sp)
-                            )
+                        if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceEvenly
+                            ) {
+                                Text("${stringResource(R.string.stat_max)}: ${viewModel.formatTime(maxTime)}", color = MaterialTheme.colorScheme.onSurface, fontSize = getAdaptiveFontSize(portraitSize = 25.sp))
+                                Text("${stringResource(R.string.stat_min)}: ${viewModel.formatTime(minTime)}", color = MaterialTheme.colorScheme.onSurface, fontSize = getAdaptiveFontSize(portraitSize = 25.sp))
+                                Text("${stringResource(R.string.stat_avg)}: ${viewModel.formatTime(avgTime)}", color = MaterialTheme.colorScheme.onSurface, fontSize = getAdaptiveFontSize(portraitSize = 25.sp))
+                            }
+                        } else {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Text("${stringResource(R.string.stat_max)}: ${viewModel.formatTime(maxTime)}", color = MaterialTheme.colorScheme.onSurface, fontSize = getAdaptiveFontSize(portraitSize = 25.sp))
+                                Text("${stringResource(R.string.stat_min)}: ${viewModel.formatTime(minTime)}", color = MaterialTheme.colorScheme.onSurface, fontSize = getAdaptiveFontSize(portraitSize = 25.sp))
+                                Text("${stringResource(R.string.stat_avg)}: ${viewModel.formatTime(avgTime)}", color = MaterialTheme.colorScheme.onSurface, fontSize = getAdaptiveFontSize(portraitSize = 25.sp))
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(12.dp))
+
+                        LazyColumn(
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            itemsIndexed(sessionTimes.reversed()) { index, time ->
+                                Text(
+                                    text = "${stringResource(R.string.repetition_label)} ${sessionTimes.size - index}: ${viewModel.formatTime(time)}",
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                    fontSize = getAdaptiveFontSize(portraitSize = 30.sp)
+                                )
+                            }
                         }
                     }
                 }
@@ -207,8 +212,11 @@ fun ResistenceScreen(
 @Preview(showBackground = true)
 @Composable
 fun PreviewResistenceScreen() {
-    val fakeViewModel = com.example.kegelcontrol.viewmodel.ResistenceViewModel()
     KegelControlTheme {
-        ResistenceScreen(navController = rememberNavController(), viewModel = fakeViewModel, uiViewModel = viewModel())
+        ResistenceScreen(
+            navController = rememberNavController(), 
+            viewModel = viewModel(), 
+            uiViewModel = viewModel()
+        )
     }
 }

@@ -44,10 +44,10 @@ fun AppNavigation() {
             HomeScreen(navController = navController, uiViewModel = uiViewModel)
         }
         composable(Screen.Crono.route) {
-            CronoScreen(navController = navController, viewModel = cronoViewModel)
+            CronoScreen(navController = navController, viewModel = cronoViewModel, uiViewModel = uiViewModel)
         }
         composable(Screen.Resistence.route) {
-            ResistenceScreen(navController = navController, viewModel = resistenceViewModel)
+            ResistenceScreen(navController = navController, viewModel = resistenceViewModel, uiViewModel = uiViewModel)
         }
         composable(Screen.Routine.route) {
             RoutineScreen(navController = navController, viewModel = routineViewModel, uiViewModel = uiViewModel)

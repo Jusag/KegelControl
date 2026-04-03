@@ -1,7 +1,5 @@
 package com.example.kegelcontrol.ui.screens
 
-import android.content.res.Configuration
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -17,6 +15,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.kegelcontrol.R
@@ -48,7 +47,6 @@ fun CronoScreen(
     var showResetDialog by remember { mutableStateOf(false) }
 
     val customFont = FontFamily(Font(R.font.ltstopwatch_regular))
-    val configuration = LocalConfiguration.current
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background
@@ -100,30 +98,40 @@ fun CronoScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(0.6f)
-                        .background(MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(20.dp))
                         .padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    if (lapsList.isNotEmpty()) {
-                        Text(
-                            "${stringResource(R.string.stat_avg)}: ${viewModel.formatTime(viewModel.auxProm)}",
-                            color = MaterialTheme.colorScheme.onSurface,
-                            fontSize = getAdaptiveFontSize(portraitSize = 30.sp)
-                        )
-                        Spacer(modifier = Modifier.height(12.dp))
-                    }
-
-                    LazyColumn(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
+                    Surface(
+                        modifier = Modifier.fillMaxSize(),
+                        color = MaterialTheme.colorScheme.surface,
+                        shape = RoundedCornerShape(20.dp)
                     ) {
-                        itemsIndexed(lapsList.takeLast(10).reversed()) { index, lap ->
-                            Text(
-                                "${stringResource(R.string.stat_lap)} ${lapsList.size - index} - ${stringResource(R.string.stat_time)}: ${viewModel.formatTime(lap)}",
-                                color = MaterialTheme.colorScheme.onSurface,
-                                fontSize = getAdaptiveFontSize(portraitSize = 25.sp)
-                            )
+                        Column(
+                            modifier = Modifier.padding(16.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            if (lapsList.isNotEmpty()) {
+                                Text(
+                                    "${stringResource(R.string.stat_avg)}: ${viewModel.formatTime(viewModel.auxProm)}",
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                    fontSize = getAdaptiveFontSize(portraitSize = 30.sp)
+                                )
+                                Spacer(modifier = Modifier.height(12.dp))
+                            }
+
+                            LazyColumn(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalArrangement = Arrangement.spacedBy(8.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                itemsIndexed(lapsList.takeLast(10).reversed()) { index, lap ->
+                                    Text(
+                                        "${stringResource(R.string.stat_lap)} ${lapsList.size - index} - ${stringResource(R.string.stat_time)}: ${viewModel.formatTime(lap)}",
+                                        color = MaterialTheme.colorScheme.onSurface,
+                                        fontSize = getAdaptiveFontSize(portraitSize = 25.sp)
+                                    )
+                                }
+                            }
                         }
                     }
                 }
@@ -187,8 +195,11 @@ fun CronoScreen(
 @Preview(showBackground = true)
 @Composable
 fun PreviewCronoScreen() {
-    val fakeViewModel = com.example.kegelcontrol.viewmodel.CronoViewModel()
     KegelControlTheme {
-        CronoScreen(navController = rememberNavController(), viewModel = fakeViewModel, uiViewModel = viewModel())
+        CronoScreen(
+            navController = rememberNavController(), 
+            viewModel = viewModel(), 
+            uiViewModel = viewModel()
+        )
     }
 }
