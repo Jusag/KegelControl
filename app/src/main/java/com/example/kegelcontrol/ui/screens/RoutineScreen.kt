@@ -1,12 +1,13 @@
 package com.example.kegelcontrol.ui.screens
 
-import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDownward
@@ -24,7 +25,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.kegelcontrol.R
 import com.example.kegelcontrol.ui.Screen
-import com.example.kegelcontrol.ui.components.BottomNavBar
 import com.example.kegelcontrol.ui.components.CustomButton
 import com.example.kegelcontrol.viewmodel.RoutineStep
 import com.example.kegelcontrol.viewmodel.RoutineViewModel
@@ -36,9 +36,9 @@ fun RoutineScreen(navController: NavController, viewModel: RoutineViewModel, uiV
     val routineSteps by viewModel.routineSteps.collectAsState()
     
     // Variables para controlar el porcentaje de espacio (weights)
-    val listWeight = 0.5f      // 50% para la lista
-    val optionsWeight = 0.20f   // 35% para las opciones de añadir
-    val startButtonWeight = 0.30f // 15% para el botón START
+    val listWeight = 0.4f      // Reducido un poco para dar espacio a opciones
+    val optionsWeight = 0.35f   // Aumentado para que quepan las 3 opciones
+    val startButtonWeight = 0.25f
 
     // Tamaños estándar desde la clase maestra
     val topButtonHeight by uiViewModel.topButtonHeight.collectAsState()
@@ -92,7 +92,7 @@ fun RoutineScreen(navController: NavController, viewModel: RoutineViewModel, uiV
                     style = MaterialTheme.typography.titleLarge
                 )
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
                 // 1. Panel Superior: Lista de pasos programados
                 Box(
@@ -119,12 +119,13 @@ fun RoutineScreen(navController: NavController, viewModel: RoutineViewModel, uiV
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // 2. Panel Central: Añadir pasos
+                // 2. Panel Central: Añadir pasos (con scroll por si acaso)
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .weight(optionsWeight),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                        .weight(optionsWeight)
+                        .verticalScroll(rememberScrollState()),
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     AddStepRow(
                         label = stringResource(R.string.routine_contract),
@@ -155,7 +156,7 @@ fun RoutineScreen(navController: NavController, viewModel: RoutineViewModel, uiV
                     )
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
                 // 3. Botón inferior: INICIAR / START
                 Box(
@@ -165,7 +166,7 @@ fun RoutineScreen(navController: NavController, viewModel: RoutineViewModel, uiV
                     contentAlignment = Alignment.Center
                 ) {
                     CustomButton(
-                        modifier = Modifier.fillMaxWidth().fillMaxHeight(0.8f),
+                        modifier = Modifier.fillMaxWidth().fillMaxHeight(0.9f),
                         text = stringResource(R.string.action_start),
                         onClick = { /* Próxima etapa: Ejecución de la rutina */ }
                     )
@@ -203,14 +204,15 @@ fun AddStepRow(label: String, value: String, onValueChange: (String) -> Unit, on
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(text = label, modifier = Modifier.weight(1f), fontSize = 18.sp)
+        Text(text = label, modifier = Modifier.weight(1f), fontSize = 16.sp)
         OutlinedTextField(
             value = value,
             onValueChange = onValueChange,
-            modifier = Modifier.width(80.dp),
+            modifier = Modifier.width(70.dp), // Reducido el ancho del input
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             singleLine = true,
-            placeholder = { Text("0") }
+            textStyle = LocalTextStyle.current.copy(fontSize = 14.sp),
+            placeholder = { Text("0", fontSize = 14.sp) }
         )
         IconButton(onClick = onAdd) {
             Icon(Icons.Default.Add, contentDescription = "Add", tint = MaterialTheme.colorScheme.primary)
@@ -235,7 +237,7 @@ fun RoutineStepItem(
     }
 
     Card(
-        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+        modifier = Modifier.fillMaxWidth().padding(vertical = 2.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
     ) {
         Row(
@@ -243,16 +245,20 @@ fun RoutineStepItem(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(text = "${index + 1}. $typeText - ${step.duration} ${stringResource(R.string.routine_seconds_unit)}", modifier = Modifier.weight(1f))
+            Text(
+                text = "${index + 1}. $typeText - ${step.duration} ${stringResource(R.string.routine_seconds_unit)}",
+                modifier = Modifier.weight(1f),
+                fontSize = 14.sp
+            )
             
             Row {
-                IconButton(onClick = onMoveUp, enabled = !isFirst) {
+                IconButton(onClick = onMoveUp, enabled = !isFirst, modifier = Modifier.size(32.dp)) {
                     Icon(Icons.Default.ArrowUpward, contentDescription = stringResource(R.string.move_up_description), tint = if (isFirst) Color.Gray else MaterialTheme.colorScheme.primary)
                 }
-                IconButton(onClick = onMoveDown, enabled = !isLast) {
+                IconButton(onClick = onMoveDown, enabled = !isLast, modifier = Modifier.size(32.dp)) {
                     Icon(Icons.Default.ArrowDownward, contentDescription = stringResource(R.string.move_down_description), tint = if (isLast) Color.Gray else MaterialTheme.colorScheme.primary)
                 }
-                IconButton(onClick = onRemove) {
+                IconButton(onClick = onRemove, modifier = Modifier.size(32.dp)) {
                     Icon(Icons.Default.Delete, contentDescription = "Delete", tint = MaterialTheme.colorScheme.error)
                 }
             }

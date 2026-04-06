@@ -172,7 +172,7 @@ fun ResistenceScreen(
                         }
                         .background(
                             color = if (isPressed) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.primary,
-                            shape = RoundedCornerShape(50.dp)
+                            shape = RoundedCornerShape(16.dp) // Cambiado de 50.dp a 16.dp para consistencia
                         ),
                     contentAlignment = Alignment.Center
                 ) {
